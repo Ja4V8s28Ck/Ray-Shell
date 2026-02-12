@@ -16,13 +16,15 @@ func main() {
 	for {
 		fmt.Print("$ ")
 		command, err := buffReader.ReadString('\n')
-		if command == "exit" {
+
+		shellCommand := command[:len(command)-1]
+		if shellCommand == "exit" {
 			os.Exit(0)
 		}
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error reading input:", err)
 			os.Exit(1)
 		}
-		fmt.Println(command[:len(command)-1] + ": command not found")
+		fmt.Println(shellCommand + ": command not found")
 	}
 }
