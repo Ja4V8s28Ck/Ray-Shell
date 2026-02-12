@@ -4,27 +4,42 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
-// Ensures gofmt doesn't remove the "fmt" import in stage 1 (feel free to remove this!)
-var _ = fmt.Print
+func logFatal(err error) {
+	fmt.Fprintln(os.Stderr, "Error reading input:", err)
+	os.Exit(1)
+}
 
 func main() {
-	// TODO: Uncomment the code below to pass the first stage
+	// Map commands to it's function
+	cmdFuncMap := map[string]func(shellArgs []string){
+		"exit": func(shellArgs []string) { os.Exit(0) },
+		"echo": func(shellArgs []string) { fmt.Println(strings.Join(shellArgs, " ")) },
+	}
+
 	buffReader := bufio.NewReader(os.Stdin)
 
 	for {
 		fmt.Print("$ ")
-		command, err := buffReader.ReadString('\n')
 
-		shellCommand := command[:len(command)-1]
-		if shellCommand == "exit" {
-			os.Exit(0)
-		}
+		cmdLine, err := buffReader.ReadString('\n')
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Error reading input:", err)
-			os.Exit(1)
+			logFatal(err)
 		}
-		fmt.Println(shellCommand + ": command not found")
+
+		var shellArgs []string
+		cmdLineArr := strings.Split(cmdLine[:len(cmdLine)-1], " ")
+		shellCmd := cmdLineArr[0]
+		if len(cmdLineArr) > 1 {
+			shellArgs = cmdLineArr[1:]
+		}
+
+		if cmdFunc, ok := cmdFuncMap[shellCmd]; ok == true {
+			cmdFunc(shellArgs)
+		} else {
+			fmt.Println(shellCmd + ": command not found")
+		}
 	}
 }
