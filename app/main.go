@@ -4,16 +4,13 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
 )
 
 func logFatal(err error) {
 	fmt.Fprintln(os.Stderr, "Error reading input:", err)
 	os.Exit(1)
-}
-
-func invalidCommand(shellCmd string) {
-	fmt.Println(shellCmd + ": command not found")
 }
 
 func main() {
@@ -25,11 +22,18 @@ func main() {
 		"type": func(shellArgs []string) {
 			if len(shellArgs) == 0 {
 				fmt.Println("type command needs argument")
+
 			} else if len(shellArgs) == 1 {
+
 				if _, ok := cmdFuncMap[shellArgs[0]]; ok {
 					fmt.Println(shellArgs[0] + " is a shell builtin")
+
 				} else {
-					fmt.Println(shellArgs[0] + ": not found")
+					if path, _ := exec.LookPath(shellArgs[0]); path != "" {
+						fmt.Println(shellArgs[0] + " is " + path)
+					} else {
+						fmt.Println(shellArgs[0] + ": not found")
+					}
 				}
 			}
 		},
