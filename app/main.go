@@ -17,12 +17,21 @@ func main() {
 	// Map commands to it's function
 	var cmdFuncMap map[string]func(shellArgs []string)
 	cmdFuncMap = map[string]func(shellArgs []string){
+		"cd": func(shellArgs []string) {
+			if len(shellArgs) == 1 { // Only 1 arg allowed
+				if err := os.Chdir(shellArgs[0]); err != nil {
+					fmt.Printf("cd: %s: No such file or directory\n", shellArgs[0])
+				}
+			} else {
+				fmt.Println("cd: too many argument")
+			}
+		},
 		"echo": func(shellArgs []string) { fmt.Println(strings.Join(shellArgs, " ")) },
 		"exit": func(shellArgs []string) { os.Exit(0) },
 		"pwd":  func(shellArgs []string) { pwd, _ := os.Getwd(); fmt.Println(pwd) },
 		"type": func(shellArgs []string) {
 			if len(shellArgs) == 0 {
-				fmt.Println("type command needs argument")
+				fmt.Println("type: needs an argument")
 
 			} else if len(shellArgs) == 1 {
 
