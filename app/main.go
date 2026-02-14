@@ -59,7 +59,15 @@ func main() {
 		if cmdFunc, ok := cmdFuncMap[shellCmd]; ok == true {
 			cmdFunc(shellArgs)
 		} else {
-			fmt.Println(shellCmd + ": command not found")
+			if path, _ := exec.LookPath(shellCmd); path != "" {
+				cmd := exec.Command(shellCmd, shellArgs...)
+				cmd.Stdin = os.Stdin
+				cmd.Stdout = os.Stdout
+				cmd.Stderr = os.Stderr
+				cmd.Run()
+			} else {
+				fmt.Println(shellCmd + ": command not found")
+			}
 		}
 	}
 }
