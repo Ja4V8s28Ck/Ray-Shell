@@ -19,6 +19,7 @@ func main() {
 	cmdFuncMap = map[string]func(shellArgs []string){
 		"echo": func(shellArgs []string) { fmt.Println(strings.Join(shellArgs, " ")) },
 		"exit": func(shellArgs []string) { os.Exit(0) },
+		"pwd":  func(shellArgs []string) { pwd, _ := os.Getwd(); fmt.Println(pwd) },
 		"type": func(shellArgs []string) {
 			if len(shellArgs) == 0 {
 				fmt.Println("type command needs argument")
