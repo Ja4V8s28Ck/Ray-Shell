@@ -26,13 +26,14 @@ func readCmd(buffReader *bufio.Reader) (string, []string) {
 	return shellCmd, shellArgs
 }
 
-func parseArgs(input string) []string {
+func parseArgs(shellArgString string) []string {
 	var args []string
 	var stringBuilder strings.Builder
 	var inQuote rune // 0 means not in quote, '"' or '\'' means in that quote
+	n := len(shellArgString)
 
-	for i := 0; i < len(input); i++ {
-		char := rune(input[i])
+	for i := 0; i < n; i++ {
+		char := rune(shellArgString[i])
 
 		switch {
 		case char == '"' || char == '\'':
@@ -50,9 +51,12 @@ func parseArgs(input string) []string {
 				stringBuilder.Reset()
 			}
 
-		case char == '\\' && i+1 < len(input):
+		case char == '\\' && i+1 < n:
+			if inQuote == '\'' {
+				stringBuilder.WriteRune(char)
+			}
+			stringBuilder.WriteRune(rune(shellArgString[i+1]))
 			i++
-			stringBuilder.WriteByte(input[i])
 
 		default:
 			stringBuilder.WriteRune(char)
