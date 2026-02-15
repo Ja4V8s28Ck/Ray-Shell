@@ -51,10 +51,7 @@ func parseArgs(shellArgString string) []string {
 				stringBuilder.Reset()
 			}
 
-		case char == '\\' && i+1 < n:
-			if inQuote == '\'' {
-				stringBuilder.WriteRune(char)
-			}
+		case char == '\\' && i+1 < n && inQuote != '\'':
 			stringBuilder.WriteRune(rune(shellArgString[i+1]))
 			i++
 
