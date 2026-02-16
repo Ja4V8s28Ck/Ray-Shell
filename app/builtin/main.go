@@ -1,8 +1,16 @@
 package builtin
 
+import "io"
+
+type ExecContext struct {
+	Stdin  io.Reader
+	Stdout io.Writer
+	Stderr io.Writer
+}
+
 type Builtin interface {
 	Name() string
-	Execute(shellArgs []string)
+	Execute(shellArgs []string, ctx *ExecContext)
 }
 
 var CmdFuncMap = make(map[string]Builtin)

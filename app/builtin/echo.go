@@ -11,6 +11,7 @@ func (echo Echo) Name() string {
 	return "echo"
 }
 
-func (echo Echo) Execute(shellArgs []string) {
-	fmt.Println(strings.Join(shellArgs, " "))
+func (echo Echo) Execute(shellArgs []string, ctx *ExecContext) {
+	echoOut := strings.Join(shellArgs, " ")
+	fmt.Fprintln(ctx.Stdout, echoOut)
 }

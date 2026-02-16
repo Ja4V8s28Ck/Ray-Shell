@@ -11,12 +11,12 @@ func (pwd Pwd) Name() string {
 	return "pwd"
 }
 
-func (pwd Pwd) Execute(shellArgs []string) {
+func (pwd Pwd) Execute(shellArgs []string, ctx *ExecContext) {
 	wd, err := os.Getwd()
 
 	if err != nil {
-		fmt.Printf("pwd: %v", wd)
+		fmt.Fprintf(ctx.Stderr, "pwd: %v\n", err)
 	} else {
-		fmt.Println(wd)
+		fmt.Fprintln(ctx.Stdout, wd)
 	}
 }
