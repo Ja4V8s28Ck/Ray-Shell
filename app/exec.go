@@ -15,18 +15,27 @@ func execCmd(shellCmd string, shellArgs []string) {
 	var stdout io.Writer = os.Stdout
 	var stderr io.Writer = os.Stderr
 
-	if n > 2 && (shellArgs[n-2] == ">" || shellArgs[n-2] == "1>" || shellArgs[n-2] == "2>") {
-		outputFile, err := os.Create(shellArgs[n-1])
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return
-		}
-		defer outputFile.Close()
+	if n > 2 && (isRedirectOutput(shellArgs[n-2])) {
+
+		fileName := shellArgs[n-1]
+		var outputFile *os.File
 
 		switch shellArgs[n-2] {
 		case ">", "1>":
+			outputFile = createFile(fileName)
+			defer outputFile.Close()
 			stdout = outputFile
 		case "2>":
+			outputFile = createFile(fileName)
+			defer outputFile.Close()
+			stderr = outputFile
+		case ">>", "1>>":
+			outputFile = readFile(fileName)
+			defer outputFile.Close()
+			stdout = outputFile
+		case "2>>":
+			outputFile = readFile(fileName)
+			defer outputFile.Close()
 			stderr = outputFile
 		}
 
