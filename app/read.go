@@ -16,6 +16,10 @@ func readCmd(buffReader *bufio.Reader) (string, []string) {
 
 	var shellArgs []string
 	cmdLine = strings.TrimRight(cmdLine, "\n")
+	if cmdLine == "" {
+		return cmdLine, []string{}
+	}
+
 	cmdLineArr := parseArgs(cmdLine)
 	shellCmd := cmdLineArr[0]
 
