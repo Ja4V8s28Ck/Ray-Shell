@@ -1,34 +1,18 @@
-[![progress-banner](https://backend.codecrafters.io/progress/shell/e32f99a1-e941-48e9-8ded-2162565eeb75)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+## Ray Shell
 
-This is a starting point for Go solutions to the
-["Build Your Own Shell" Challenge](https://app.codecrafters.io/courses/shell/overview).
+Most developers take command line shells like bash, zsh, fsh ...etc for granted (_including me_). But when I wanted to build one myself, that's when I realized that there is complex engineering right under my nose the whole time. Aspects of technology that goes into building a functional POSIX shell blew my mind.
 
-In this challenge, you'll build your own POSIX compliant shell that's capable of
-interpreting shell commands, running external programs and builtin commands like
-cd, pwd, echo and more. Along the way, you'll learn about shell command parsing,
-REPLs, builtin commands, and more.
+- Process Lifecycle: Managing OS calls `fork()` and `exec()` calls to run external programs.
+- System Architecture: Navigating the $PATH environment and managing file descriptors.
+- Parsing Logic: Implementing a robust lexer to handle quoted strings, escaped characters and complex arguments.
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+### Features implemented so far
 
-# Passing the first stage
-
-The entry point for your `shell` implementation is in `app/main.go`. Study and
-uncomment the relevant code, and push your changes to pass the first stage:
-
-```sh
-git commit -am "pass 1st stage" # any msg
-git push origin master
-```
-
-Time to move on to the next stage!
-
-# Stage 2 & beyond
-
-Note: This section is for stages 2 and beyond.
-
-1. Ensure you have `go (1.25)` installed locally
-1. Run `./your_program.sh` to run your program, which is implemented in
-   `app/main.go`.
-1. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
+- [x] Basics (_Prompt_, _REPL_, Built in commands like _echo_, _exit_, _type_ & _OS system calls_)
+- [x] Navigation (_pwd_, _cd_ & _~_ )
+- [x] Quoting (_'_, _"_ & _\\_)
+- [x] Redirect (_input_, _output_ & _error_)
+- [ ] Autocompletion
+- [ ] Pipelines
+- [ ] History
+- [ ] History persistence
