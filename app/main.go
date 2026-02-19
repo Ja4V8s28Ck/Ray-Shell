@@ -12,7 +12,7 @@ func main() {
 	for {
 		fmt.Print("$ ")
 
-		shellCmd, shellArgs := readCmd(buffReader)
+		shellCmd, shellArgs := parseCmd(buffReader)
 		if shellCmd == "" {
 			continue
 		}
