@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func readCmd(buffReader *bufio.Reader) (string, []string) {
+func parseCmd(buffReader *bufio.Reader) (string, []string) {
 	cmdLine, err := buffReader.ReadString('\n')
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error reading input:", err)
