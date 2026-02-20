@@ -1,5 +1,10 @@
 package builtin
 
+import (
+	"os"
+	"path/filepath"
+)
+
 type TrieNode struct {
 	children  map[rune]*TrieNode
 	endOfWord bool
@@ -57,8 +62,23 @@ func (T *TrieNode) findAllMatches(prefixString string) []string {
 var trie TrieNode = Trie()
 
 func buildTrie() {
+	// Insert builtin commands
 	for key := range CmdFuncMap {
 		trie.insertWord(key)
+	}
+
+	// Insert files in PATH
+	for _, dir := range filepath.SplitList(os.Getenv("PATH")) {
+		entries, err := os.ReadDir(dir)
+		if err != nil {
+			continue
+		}
+		for _, entry := range entries {
+			if entry.IsDir() {
+				continue
+			}
+			trie.insertWord(entry.Name())
+		}
 	}
 }
 
