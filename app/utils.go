@@ -28,3 +28,7 @@ func createFile(fileName string) *os.File {
 
 	return file
 }
+
+func ringBell() {
+	fmt.Fprint(os.Stdout, "\x07")
+}

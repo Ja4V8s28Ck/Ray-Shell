@@ -48,7 +48,7 @@ func readLine(prompt string) (string, error) {
 			switch len(autoCompleteMatches) {
 
 			case 0:
-				fmt.Fprint(os.Stdout, "\x07")
+				ringBell()
 
 			case 1:
 				suffixString := autoCompleteMatches[0][len(prefixString):] + " "
