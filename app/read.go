@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/codecrafters-io/shell-starter-go/app/builtin"
 	"golang.org/x/term"
 )
 
@@ -34,6 +35,16 @@ func readLine(prompt string) (string, error) {
 				readBuffer = append(readBuffer[:cursorPtr-1], readBuffer[cursorPtr:]...)
 				cursorPtr--
 				redraw(prompt, readBuffer)
+			}
+
+		case '\t':
+			if len(readBuffer) == 0 { // don't autocomplete when the buffer is empty
+				continue
+			}
+
+			autoCompleteMatches := builtin.AutoComplete(string(readBuffer))
+			if len(autoCompleteMatches) == 1 {
+				fmt.Print(autoCompleteMatches[0] + " ")
 			}
 
 		case '\r':
