@@ -49,11 +49,18 @@ func readLine(prompt string) (string, error) {
 
 			case 0:
 				fmt.Fprint(os.Stdout, "\x07")
+
 			case 1:
 				suffixString := autoCompleteMatches[0][len(prefixString):] + " "
 				fmt.Fprint(os.Stdin, suffixString)
 				readBuffer = append(readBuffer, suffixString...)
 				cursorPtr = len(readBuffer)
+
+			default:
+				fmt.Print("\r\n")
+				for _, match := range autoCompleteMatches {
+					fmt.Printf("%s  ", match)
+				}
 			}
 
 		case '\r', '\n':
