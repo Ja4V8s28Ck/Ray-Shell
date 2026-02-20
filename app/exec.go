@@ -58,7 +58,7 @@ func execCmd(shellCmd string, shellArgs []string) {
 			cmd.Stderr = stderr
 			cmd.Run()
 		} else {
-			fmt.Println(shellCmd + ": command not found")
+			fmt.Fprintln(stderr, shellCmd+": command not found")
 		}
 	}
 }
