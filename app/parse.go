@@ -6,7 +6,8 @@ import (
 
 func parseCmd(cmdLine string) (string, []string) {
 	var shellArgs []string
-	cmdLine = strings.TrimRight(cmdLine, "\n")
+
+	cmdLine = strings.TrimSpace(cmdLine)
 	if cmdLine == "" {
 		return cmdLine, []string{}
 	}
