@@ -43,8 +43,15 @@ func readLine(prompt string) (string, error) {
 			}
 
 			autoCompleteMatches := builtin.AutoComplete(string(readBuffer))
-			if len(autoCompleteMatches) == 1 {
+
+			switch len(autoCompleteMatches) {
+
+			case 0:
+				fmt.Print('\x07')
+			case 1:
 				fmt.Print(autoCompleteMatches[0] + " ")
+				readBuffer = append(readBuffer, autoCompleteMatches[0]...)
+				cursorPtr = len(readBuffer)
 			}
 
 		case '\r':
