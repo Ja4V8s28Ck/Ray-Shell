@@ -23,4 +23,6 @@ func init() {
 		"pwd":  Pwd{},
 		"type": Type{},
 	}
+
+	buildTrie()
 }
