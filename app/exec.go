@@ -15,7 +15,7 @@ func execCmd(shellCmd string, shellArgs []string) {
 	var stdout io.Writer = os.Stdout
 	var stderr io.Writer = os.Stderr
 
-	if n > 2 && (isRedirectOutput(shellArgs[n-2])) {
+	if n >= 2 && (isRedirectOutput(shellArgs[n-2])) {
 
 		fileName := shellArgs[n-1]
 		var outputFile *os.File
