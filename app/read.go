@@ -55,7 +55,9 @@ func readLine(prompt string) (string, error) {
 				cursorPtr = len(readBuffer)
 			}
 
-		case '\r':
+		case '\r', '\n':
+			// '\r' is what I can capture
+			// '\n' is what the codecrafters test is capturing
 			fmt.Fprint(os.Stdin, "\r\n")
 			return string(readBuffer), nil
 
