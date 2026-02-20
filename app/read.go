@@ -47,21 +47,22 @@ func readLine(prompt string) (string, error) {
 			switch len(autoCompleteMatches) {
 
 			case 0:
-				fmt.Print('\x07')
+				fmt.Fprint(os.Stdout, "\x07")
 			case 1:
-				fmt.Print(autoCompleteMatches[0] + " ")
+				autoCompleteMatches[0] += " "
+				fmt.Fprint(os.Stdin, autoCompleteMatches[0])
 				readBuffer = append(readBuffer, autoCompleteMatches[0]...)
 				cursorPtr = len(readBuffer)
 			}
 
 		case '\r':
-			fmt.Print("\r\n")
+			fmt.Fprint(os.Stdin, "\r\n")
 			return string(readBuffer), nil
 
 		default:
 			readBuffer = append(readBuffer[:cursorPtr], append(byteBuffer, readBuffer[cursorPtr:]...)...)
 			cursorPtr++
-			fmt.Print(string(byteBuffer))
+			fmt.Fprint(os.Stdin, string(byteBuffer))
 
 		}
 	}
