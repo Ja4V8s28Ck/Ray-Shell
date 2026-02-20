@@ -1,18 +1,20 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 )
 
 func main() {
-	buffReader := bufio.NewReader(os.Stdin)
-
 	for {
-		fmt.Print("$ ")
+		cmdLine, err := readLine("$")
 
-		shellCmd, shellArgs := parseCmd(buffReader)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		shellCmd, shellArgs := parseCmd(cmdLine)
 		if shellCmd == "" {
 			continue
 		}

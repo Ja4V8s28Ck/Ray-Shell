@@ -1,19 +1,10 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
-	"os"
 	"strings"
 )
 
-func parseCmd(buffReader *bufio.Reader) (string, []string) {
-	cmdLine, err := buffReader.ReadString('\n')
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error reading input:", err)
-		os.Exit(1)
-	}
-
+func parseCmd(cmdLine string) (string, []string) {
 	var shellArgs []string
 	cmdLine = strings.TrimRight(cmdLine, "\n")
 	if cmdLine == "" {
