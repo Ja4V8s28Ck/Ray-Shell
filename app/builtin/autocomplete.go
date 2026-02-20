@@ -42,7 +42,7 @@ func (T *TrieNode) findAllMatches(prefixString string) []string {
 
 	dfs = func(T *TrieNode, currentString string) {
 		if T.endOfWord {
-			matchedStrings = append(matchedStrings, currentString)
+			matchedStrings = append(matchedStrings, prefixString+currentString)
 		}
 		for k, childNode := range T.children {
 			dfs(childNode, currentString+string(k))

@@ -42,16 +42,17 @@ func readLine(prompt string) (string, error) {
 				continue
 			}
 
-			autoCompleteMatches := builtin.AutoComplete(string(readBuffer))
+			prefixString := string(readBuffer)
+			autoCompleteMatches := builtin.AutoComplete(prefixString)
 
 			switch len(autoCompleteMatches) {
 
 			case 0:
 				fmt.Fprint(os.Stdout, "\x07")
 			case 1:
-				autoCompleteMatches[0] += " "
-				fmt.Fprint(os.Stdin, autoCompleteMatches[0])
-				readBuffer = append(readBuffer, autoCompleteMatches[0]...)
+				suffixString := autoCompleteMatches[0][len(prefixString):] + " "
+				fmt.Fprint(os.Stdin, suffixString)
+				readBuffer = append(readBuffer, suffixString...)
 				cursorPtr = len(readBuffer)
 			}
 
