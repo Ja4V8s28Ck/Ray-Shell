@@ -91,40 +91,18 @@ func execSingle(shellCmd string, shellArgs []string, stdin io.Reader, stdout io.
 }
 
 func execPipeline(commands [][]string) {
-	n := len(commands)
-
-	// create n-1 pipes
-	readers := make([]*io.PipeReader, n-1)
-	writers := make([]*io.PipeWriter, n-1)
-	for i := 0; i < n-1; i++ {
-		readers[i], writers[i] = io.Pipe()
-	}
-
-	done := make(chan struct{}, n)
+	var input io.Reader = os.Stdin
 
 	for i, cmdArgs := range commands {
-		var stdin io.Reader = os.Stdin
-		var stdout io.Writer = os.Stdout
-
-		if i > 0 {
-			stdin = readers[i-1]
+		if i == len(commands)-1 {
+			execSingle(cmdArgs[0], cmdArgs[1:], input, os.Stdout, os.Stderr)
+		} else {
+			pr, pw := io.Pipe()
+			go func(cmdArgs []string, input io.Reader, pw *io.PipeWriter) {
+				execSingle(cmdArgs[0], cmdArgs[1:], input, pw, os.Stderr)
+				pw.Close()
+			}(cmdArgs, input, pw)
+			input = pr
 		}
-		if i < n-1 {
-			stdout = writers[i]
-		}
-
-		go func(cmdArgs []string, stdin io.Reader, stdout io.Writer) {
-			execSingle(cmdArgs[0], cmdArgs[1:], stdin, stdout, os.Stderr)
-			// close write end so next command gets EOF
-			if w, ok := stdout.(*io.PipeWriter); ok {
-				w.Close()
-			}
-			done <- struct{}{}
-		}(cmdArgs, stdin, stdout)
-	}
-
-	// wait for all commands to finish
-	for i := 0; i < n; i++ {
-		<-done
 	}
 }
