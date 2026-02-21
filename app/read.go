@@ -50,23 +50,34 @@ func readLine(prompt string) (string, error) {
 			autoCompleteMatches := builtin.AutoComplete(prefixString)
 			totalMatches := len(autoCompleteMatches)
 
-			if totalMatches == 0 {
+			switch totalMatches {
+			case 0:
 				ringBell()
-			}
 
-			if totalMatches == 1 {
+			case 1:
 				suffixString := autoCompleteMatches[0][len(prefixString):] + " "
 				fmt.Fprint(os.Stdin, suffixString)
 				readBuffer = append(readBuffer, suffixString...)
 				cursorPtr = len(readBuffer)
-			}
 
-			if tabCount == 0 {
-				ringBell()
-				tabCount++
-			} else {
-				fmt.Fprintf(os.Stdout, "\r\n%v\n", strings.Join(autoCompleteMatches, "  "))
-				redraw(prompt, readBuffer)
+			default:
+				// add longest common prefix if there is one
+				longestCommonPrefix := findLongestCommonPrefix(autoCompleteMatches)
+				suffixString := longestCommonPrefix[len(readBuffer):]
+				if suffixString != "" {
+					fmt.Fprint(os.Stdin, suffixString)
+					readBuffer = append(readBuffer, suffixString...)
+					cursorPtr = len(readBuffer)
+					// redraw(prompt, readBuffer)
+
+				} else if tabCount == 0 {
+					ringBell()
+					tabCount++
+
+				} else {
+					fmt.Fprintf(os.Stdout, "\r\n%v\n", strings.Join(autoCompleteMatches, "  "))
+					redraw(prompt, readBuffer)
+				}
 			}
 
 		case '\r', '\n':
