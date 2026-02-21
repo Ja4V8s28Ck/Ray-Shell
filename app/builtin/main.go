@@ -17,11 +17,12 @@ var CmdFuncMap = make(map[string]Builtin)
 
 func init() {
 	CmdFuncMap = map[string]Builtin{
-		"cd":   Cd{},
-		"echo": Echo{},
-		"exit": Exit{},
-		"pwd":  Pwd{},
-		"type": Type{},
+		"cd":      Cd{},
+		"echo":    Echo{},
+		"exit":    Exit{},
+		"history": History{},
+		"pwd":     Pwd{},
+		"type":    Type{},
 	}
 
 	buildTrie()
