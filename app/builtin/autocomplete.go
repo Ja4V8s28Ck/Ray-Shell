@@ -6,22 +6,20 @@ import (
 )
 
 type TrieNode struct {
-	children  map[rune]*TrieNode
+	children  [256]*TrieNode
 	endOfWord bool
 }
 
 func Trie() TrieNode {
-	return TrieNode{
-		children: make(map[rune]*TrieNode),
-	}
+	return TrieNode{}
 }
 
 func (T *TrieNode) insertWord(word string) {
 	currentNode := T
 
 	for _, char := range word {
-		if _, ok := currentNode.children[char]; !ok {
-			currentNode.children[char] = &TrieNode{children: make(map[rune]*TrieNode)}
+		if currentNode.children[char] == nil {
+			currentNode.children[char] = &TrieNode{}
 		}
 		currentNode = currentNode.children[char]
 	}
@@ -34,7 +32,7 @@ func (T *TrieNode) findAllMatches(prefixString string) []string {
 
 	// find the trieNode at the end of prefix string
 	for _, char := range prefixString {
-		if _, ok := currentNode.children[char]; !ok {
+		if currentNode.children[char] == nil {
 			return nil
 		}
 		currentNode = currentNode.children[char]
@@ -50,7 +48,10 @@ func (T *TrieNode) findAllMatches(prefixString string) []string {
 			matchedStrings = append(matchedStrings, prefixString+currentString)
 		}
 		for k, childNode := range T.children {
-			dfs(childNode, currentString+string(k))
+			if childNode == nil {
+				continue
+			}
+			dfs(childNode, currentString+string(rune(k)))
 		}
 	}
 
