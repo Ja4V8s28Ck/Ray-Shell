@@ -9,7 +9,9 @@ import (
 	"golang.org/x/term"
 )
 
-func readLine(prompt string) (string, error) {
+var prompt = "$"
+
+func readLine() (string, error) {
 	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error initalizing xterm")
@@ -36,7 +38,7 @@ func readLine(prompt string) (string, error) {
 			if cursorPtr > 0 {
 				readBuffer = append(readBuffer[:cursorPtr-1], readBuffer[cursorPtr:]...)
 				cursorPtr--
-				redraw(prompt, readBuffer)
+				redraw(readBuffer)
 
 				tabCount = 0 // reset tabcount
 			}
@@ -76,7 +78,7 @@ func readLine(prompt string) (string, error) {
 
 				} else {
 					fmt.Fprintf(os.Stdout, "\r\n%v\n", strings.Join(autoCompleteMatches, "  "))
-					redraw(prompt, readBuffer)
+					redraw(readBuffer)
 				}
 			}
 
@@ -96,6 +98,6 @@ func readLine(prompt string) (string, error) {
 	}
 }
 
-func redraw(prompt string, readBuffer []byte) {
+func redraw(readBuffer []byte) {
 	fmt.Printf("\r\x1b[K%s %s", prompt, string(readBuffer))
 }

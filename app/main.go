@@ -9,7 +9,7 @@ import (
 
 func main() {
 	for {
-		cmdLine, err := readLine("$")
+		cmdLine, err := readLine()
 
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
