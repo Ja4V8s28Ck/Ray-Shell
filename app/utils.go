@@ -5,6 +5,10 @@ import (
 	"os"
 )
 
+func ringBell() {
+	fmt.Fprint(os.Stdout, "\x07")
+}
+
 func isRedirectOutput(symbol string) bool {
 	return symbol == ">" || symbol == "1>" || symbol == "2>" || symbol == ">>" || symbol == "1>>" || symbol == "2>>"
 }
@@ -29,6 +33,16 @@ func createFile(fileName string) *os.File {
 	return file
 }
 
-func ringBell() {
-	fmt.Fprint(os.Stdout, "\x07")
+func findLongestCommonPrefix(autoCompleteMatches []string) string {
+	referenceString := autoCompleteMatches[0]
+
+	for i := range referenceString {
+
+		for _, match := range autoCompleteMatches[1:] {
+			if match[i] != referenceString[i] {
+				return referenceString[:i]
+			}
+		}
+	}
+	return referenceString
 }
