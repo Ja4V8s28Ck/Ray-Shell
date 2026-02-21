@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"github.com/codecrafters-io/shell-starter-go/app/builtin"
 )
 
 func main() {
@@ -13,6 +15,8 @@ func main() {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
+
+		builtin.StoreHistory(cmdLine)
 
 		shellCmd, shellArgs := parseCmd(cmdLine)
 		if shellCmd == "" {
