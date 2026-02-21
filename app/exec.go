@@ -9,14 +9,38 @@ import (
 	"github.com/codecrafters-io/shell-starter-go/app/builtin"
 )
 
+func splitPipeline(shellCmd string, shellArgs []string) [][]string {
+	var commands [][]string
+	current := []string{shellCmd}
+	for _, arg := range shellArgs {
+		if arg == "|" {
+			if len(current) > 0 {
+				commands = append(commands, current)
+				current = nil
+			}
+		} else {
+			current = append(current, arg)
+		}
+	}
+	if len(current) > 0 {
+		commands = append(commands, current)
+	}
+	return commands
+}
+
 func execCmd(shellCmd string, shellArgs []string) {
+	pipeline := splitPipeline(shellCmd, shellArgs)
+	if len(pipeline) > 1 {
+		execPipeline(pipeline)
+		return
+	}
+
 	n := len(shellArgs)
 
 	var stdout io.Writer = os.Stdout
 	var stderr io.Writer = os.Stderr
 
 	if n >= 2 && (isRedirectOutput(shellArgs[n-2])) {
-
 		fileName := shellArgs[n-1]
 		var outputFile *os.File
 
@@ -42,23 +66,65 @@ func execCmd(shellCmd string, shellArgs []string) {
 		shellArgs = shellArgs[:n-2]
 	}
 
+	execSingle(shellCmd, shellArgs, os.Stdin, stdout, stderr)
+}
+
+func execSingle(shellCmd string, shellArgs []string, stdin io.Reader, stdout io.Writer, stderr io.Writer) {
 	if cmdFunc, ok := builtin.CmdFuncMap[shellCmd]; ok {
 		ctx := &builtin.ExecContext{
-			Stdin:  os.Stdin,
+			Stdin:  stdin,
 			Stdout: stdout,
 			Stderr: stderr,
 		}
-
 		cmdFunc.Execute(shellArgs, ctx)
 	} else {
 		if path, _ := exec.LookPath(shellCmd); path != "" {
 			cmd := exec.Command(shellCmd, shellArgs...)
-			cmd.Stdin = os.Stdin
+			cmd.Stdin = stdin
 			cmd.Stdout = stdout
 			cmd.Stderr = stderr
 			cmd.Run()
 		} else {
 			fmt.Fprintln(stderr, shellCmd+": command not found")
 		}
+	}
+}
+
+func execPipeline(commands [][]string) {
+	n := len(commands)
+
+	// create n-1 pipes
+	readers := make([]*io.PipeReader, n-1)
+	writers := make([]*io.PipeWriter, n-1)
+	for i := 0; i < n-1; i++ {
+		readers[i], writers[i] = io.Pipe()
+	}
+
+	done := make(chan struct{}, n)
+
+	for i, cmdArgs := range commands {
+		var stdin io.Reader = os.Stdin
+		var stdout io.Writer = os.Stdout
+
+		if i > 0 {
+			stdin = readers[i-1]
+		}
+		if i < n-1 {
+			stdout = writers[i]
+		}
+
+		go func(cmdArgs []string, stdin io.Reader, stdout io.Writer) {
+			execSingle(cmdArgs[0], cmdArgs[1:], stdin, stdout, os.Stderr)
+			// close write end so next command gets EOF
+			if w, ok := stdout.(*io.PipeWriter); ok {
+				w.Close()
+			}
+			done <- struct{}{}
+		}(cmdArgs, stdin, stdout)
+	}
+
+	// wait for all commands to finish
+	for i := 0; i < n; i++ {
+		<-done
 	}
 }
