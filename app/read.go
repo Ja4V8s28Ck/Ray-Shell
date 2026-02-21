@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/codecrafters-io/shell-starter-go/app/builtin"
 	"golang.org/x/term"
@@ -20,6 +21,7 @@ func readLine(prompt string) (string, error) {
 	var readBuffer []byte
 
 	cursorPtr := 0
+	tabCount := 0
 
 	for {
 		byteBuffer := make([]byte, 1)
@@ -35,6 +37,8 @@ func readLine(prompt string) (string, error) {
 				readBuffer = append(readBuffer[:cursorPtr-1], readBuffer[cursorPtr:]...)
 				cursorPtr--
 				redraw(prompt, readBuffer)
+
+				tabCount = 0 // reset tabcount
 			}
 
 		case '\t':
@@ -44,23 +48,25 @@ func readLine(prompt string) (string, error) {
 
 			prefixString := string(readBuffer)
 			autoCompleteMatches := builtin.AutoComplete(prefixString)
+			totalMatches := len(autoCompleteMatches)
 
-			switch len(autoCompleteMatches) {
-
-			case 0:
+			if totalMatches == 0 {
 				ringBell()
+			}
 
-			case 1:
+			if totalMatches == 1 {
 				suffixString := autoCompleteMatches[0][len(prefixString):] + " "
 				fmt.Fprint(os.Stdin, suffixString)
 				readBuffer = append(readBuffer, suffixString...)
 				cursorPtr = len(readBuffer)
+			}
 
-			default:
-				fmt.Print("\r\n")
-				for _, match := range autoCompleteMatches {
-					fmt.Printf("%s  ", match)
-				}
+			if tabCount == 0 {
+				ringBell()
+				tabCount++
+			} else {
+				fmt.Fprintf(os.Stdout, "\r\n%v\n", strings.Join(autoCompleteMatches, "  "))
+				redraw(prompt, readBuffer)
 			}
 
 		case '\r', '\n':
@@ -74,6 +80,7 @@ func readLine(prompt string) (string, error) {
 			cursorPtr++
 			fmt.Fprint(os.Stdin, string(byteBuffer))
 
+			tabCount = 0 // reset tabCount
 		}
 	}
 }
