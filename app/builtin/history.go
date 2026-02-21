@@ -12,6 +12,7 @@ func (history History) Name() string {
 }
 
 var historyArr []string
+var historyArrCount int
 
 func (history History) Execute(shellArgs []string, ctx *ExecContext) {
 	shellArgsCount := len(shellArgs)
@@ -31,8 +32,6 @@ func (history History) Execute(shellArgs []string, ctx *ExecContext) {
 		}
 	}
 
-	historyArrCount := len(historyArr)
-
 	if limit == 0 || limit > historyArrCount {
 		limit = historyArrCount
 	}
@@ -44,4 +43,5 @@ func (history History) Execute(shellArgs []string, ctx *ExecContext) {
 
 func StoreHistory(cmdLine string) {
 	historyArr = append(historyArr, cmdLine)
+	historyArrCount++
 }
