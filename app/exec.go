@@ -7,6 +7,7 @@ import (
 	"os/exec"
 
 	"github.com/codecrafters-io/shell-starter-go/app/builtin"
+	"github.com/codecrafters-io/shell-starter-go/app/utils"
 )
 
 func splitPipeline(shellCmd string, shellArgs []string) [][]string {
@@ -40,25 +41,25 @@ func execCmd(shellCmd string, shellArgs []string) {
 	var stdout io.Writer = os.Stdout
 	var stderr io.Writer = os.Stderr
 
-	if n >= 2 && (isRedirectOutput(shellArgs[n-2])) {
+	if n >= 2 && (utils.IsRedirectOutput(shellArgs[n-2])) {
 		fileName := shellArgs[n-1]
 		var outputFile *os.File
 
 		switch shellArgs[n-2] {
 		case ">", "1>":
-			outputFile = createFile(fileName)
+			outputFile = utils.CreateFile(fileName)
 			defer outputFile.Close()
 			stdout = outputFile
 		case "2>":
-			outputFile = createFile(fileName)
+			outputFile = utils.CreateFile(fileName)
 			defer outputFile.Close()
 			stderr = outputFile
 		case ">>", "1>>":
-			outputFile = readFile(fileName)
+			outputFile = utils.ReadFile(fileName)
 			defer outputFile.Close()
 			stdout = outputFile
 		case "2>>":
-			outputFile = readFile(fileName)
+			outputFile = utils.ReadFile(fileName)
 			defer outputFile.Close()
 			stderr = outputFile
 		}

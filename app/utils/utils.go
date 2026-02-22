@@ -1,19 +1,19 @@
-package main
+package utils
 
 import (
 	"fmt"
 	"os"
 )
 
-func ringBell() {
+func RingBell() {
 	fmt.Fprint(os.Stdout, "\x07")
 }
 
-func isRedirectOutput(symbol string) bool {
+func IsRedirectOutput(symbol string) bool {
 	return symbol == ">" || symbol == "1>" || symbol == "2>" || symbol == ">>" || symbol == "1>>" || symbol == "2>>"
 }
 
-func readFile(fileName string) *os.File {
+func ReadFile(fileName string) *os.File {
 	file, err := os.OpenFile(fileName, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0666)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -23,7 +23,7 @@ func readFile(fileName string) *os.File {
 	return file
 }
 
-func createFile(fileName string) *os.File {
+func CreateFile(fileName string) *os.File {
 	file, err := os.Create(fileName)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -33,7 +33,7 @@ func createFile(fileName string) *os.File {
 	return file
 }
 
-func findLongestCommonPrefix(autoCompleteMatches []string) string {
+func FindLongestCommonPrefix(autoCompleteMatches []string) string {
 	referenceString := autoCompleteMatches[0]
 
 	for i := range referenceString {

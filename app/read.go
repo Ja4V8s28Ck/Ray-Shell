@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/codecrafters-io/shell-starter-go/app/builtin"
+	"github.com/codecrafters-io/shell-starter-go/app/utils"
 	"golang.org/x/term"
 )
 
@@ -55,7 +56,7 @@ func readLine() (string, error) {
 
 			switch totalMatches {
 			case 0:
-				ringBell()
+				utils.RingBell()
 
 			case 1:
 				suffixString := autoCompleteMatches[0][len(prefixString):] + " "
@@ -65,7 +66,7 @@ func readLine() (string, error) {
 
 			default:
 				// add longest common prefix if there is one
-				longestCommonPrefix := findLongestCommonPrefix(autoCompleteMatches)
+				longestCommonPrefix := utils.FindLongestCommonPrefix(autoCompleteMatches)
 				suffixString := longestCommonPrefix[len(readBuffer):]
 				if suffixString != "" {
 					fmt.Fprint(os.Stdin, suffixString)
@@ -73,7 +74,7 @@ func readLine() (string, error) {
 					cursorPtr = len(readBuffer)
 
 				} else if tabCount == 0 {
-					ringBell()
+					utils.RingBell()
 					tabCount++
 
 				} else {
