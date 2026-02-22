@@ -21,6 +21,7 @@ func readLine() (string, error) {
 
 	fmt.Print(prompt + " ")
 	var readBuffer []byte
+	var tmpReadBuffer []byte
 
 	cursorPtr := 0
 	tabCount := 0
@@ -86,6 +87,40 @@ func readLine() (string, error) {
 			// '\n' is what the codecrafters test is capturing
 			fmt.Fprint(os.Stdin, "\r\n")
 			return string(readBuffer), nil
+
+		case 0x1b:
+			seq := make([]byte, 2)
+			os.Stdin.Read(seq)
+			if seq[0] == '[' {
+
+				// store the buffer before using arrow down
+				if tmpReadBuffer == nil {
+					tmpReadBuffer = readBuffer
+				}
+
+				switch seq[1] {
+
+				case 'A':
+					if 0 >= historyArrPtr {
+						continue
+					}
+					historyBuffer := builtin.GetHistory(&historyArrPtr, 'u')
+					readBuffer = []byte(historyBuffer)
+					redraw(readBuffer)
+
+				case 'B':
+					if historyArrPtr >= builtin.HistoryArrCount-1 {
+						readBuffer = tmpReadBuffer
+						redraw(readBuffer)
+						continue
+					}
+
+					historyBuffer := builtin.GetHistory(&historyArrPtr, 'd')
+					readBuffer = []byte(historyBuffer)
+					redraw(readBuffer)
+
+				}
+			}
 
 		default:
 			readBuffer = append(readBuffer[:cursorPtr], append(byteBuffer, readBuffer[cursorPtr:]...)...)
