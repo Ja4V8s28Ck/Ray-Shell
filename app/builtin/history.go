@@ -30,13 +30,15 @@ func (history History) Execute(shellArgs []string, ctx *ExecContext) {
 
 		case 'r':
 			ReadHistoryFromFile(shellArgs[1])
-			return // REMOVE
+
+		case 'w':
+			WriteHistoryToFile(shellArgs[1])
 
 		default:
 			fmt.Fprintf(ctx.Stderr, "history: %s: invalid option\n", shellArgs[0])
-			return
 
 		}
+		return
 	}
 
 	// if shellArgsCount > 1 { // add as else condition and kick out
@@ -95,6 +97,22 @@ func ReadHistoryFromFile(fileName string) {
 	}
 
 	if err := scanner.Err(); err != nil {
+		fmt.Fprintf(os.Stderr, "history: %v \n", err)
+	}
+}
+
+func WriteHistoryToFile(fileName string) {
+	file := utils.CreateFile(fileName)
+	defer file.Close()
+
+	scanner := bufio.NewWriter(file)
+	for _, history := range historyArr {
+		if _, err := scanner.WriteString(history + "\n"); err != nil {
+			fmt.Fprintf(os.Stderr, "history: %v \n", err)
+		}
+	}
+
+	if err := scanner.Flush(); err != nil {
 		fmt.Fprintf(os.Stderr, "history: %v \n", err)
 	}
 }
