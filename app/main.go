@@ -10,6 +10,11 @@ import (
 var historyArrPtr int
 
 func main() {
+	// Read history from HISTFILE env variable
+	if HISTFILE, ok := os.LookupEnv("HISTFILE"); ok {
+		builtin.ReadHistoryFromFile(HISTFILE)
+	}
+
 	for {
 		cmdLine, err := readLine()
 
