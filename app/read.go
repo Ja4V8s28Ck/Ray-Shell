@@ -98,5 +98,5 @@ func readLine() (string, error) {
 }
 
 func redraw(readBuffer []byte) {
-	fmt.Printf("\r\x1b[K%s %s", prompt, string(readBuffer))
+	fmt.Fprintf(os.Stdin, "\r\x1b[K%s %s", prompt, string(readBuffer))
 }
