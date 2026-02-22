@@ -1,8 +1,12 @@
 package builtin
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strconv"
+
+	"github.com/codecrafters-io/shell-starter-go/app/utils"
 )
 
 type History struct{}
@@ -20,10 +24,25 @@ func (history History) Execute(shellArgs []string, ctx *ExecContext) {
 
 	limit := 0
 
-	if shellArgsCount > 1 {
-		fmt.Fprintln(ctx.Stderr, "history: too many arguments")
-		return
+	if shellArgsCount == 2 && len(shellArgs[0]) == 2 && shellArgs[0][0] == '-' {
+		// handle flags
+		switch shellArgs[0][1] {
+
+		case 'r':
+			ReadHistoryFromFile(shellArgs[1])
+			return // REMOVE
+
+		default:
+			fmt.Fprintf(ctx.Stderr, "history: %s: invalid option\n", shellArgs[0])
+			return
+
+		}
 	}
+
+	// if shellArgsCount > 1 { // add as else condition and kick out
+	// 	fmt.Fprintln(ctx.Stderr, "history: too many arguments")
+	// 	return
+	// }
 
 	if shellArgsCount == 1 {
 		if intVal, err := strconv.Atoi(shellArgs[0]); err == nil {
@@ -44,6 +63,10 @@ func (history History) Execute(shellArgs []string, ctx *ExecContext) {
 }
 
 func StoreHistory(cmdLine string) {
+	if cmdLine == "" {
+		return
+	}
+
 	historyArr = append(historyArr, cmdLine)
 	HistoryArrCount++
 }
@@ -60,4 +83,18 @@ func GetHistory(historyArrIdx *int, direction rune) string {
 	}
 
 	return historyString
+}
+
+func ReadHistoryFromFile(fileName string) {
+	file := utils.ReadFile(fileName)
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		StoreHistory(scanner.Text())
+	}
+
+	if err := scanner.Err(); err != nil {
+		fmt.Fprintf(os.Stderr, "history: %v \n", err)
+	}
 }
