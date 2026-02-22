@@ -70,7 +70,6 @@ func readLine() (string, error) {
 					fmt.Fprint(os.Stdin, suffixString)
 					readBuffer = append(readBuffer, suffixString...)
 					cursorPtr = len(readBuffer)
-					// redraw(prompt, readBuffer)
 
 				} else if tabCount == 0 {
 					ringBell()
