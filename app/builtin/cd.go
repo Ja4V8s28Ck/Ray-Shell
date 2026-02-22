@@ -33,4 +33,7 @@ func (cd Cd) Execute(shellArgs []string, ctx *ExecContext) {
 	if err := os.Chdir(cdArg); err != nil {
 		fmt.Fprintf(ctx.Stderr, "cd: %s: No such file or directory\n", cdArg)
 	}
+
+	// build trie on directory change
+	BuildTrieLazy()
 }

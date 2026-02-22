@@ -83,6 +83,27 @@ func buildTrie() {
 	}
 }
 
+func BuildTrieLazy() {
+	// Inserts files in the current directory
+	wd, err := os.Getwd()
+	if err != nil {
+		return
+	}
+
+	for _, dir := range filepath.SplitList(wd) {
+		entries, err := os.ReadDir(dir)
+		if err != nil {
+			continue
+		}
+		for _, entry := range entries {
+			if entry.IsDir() {
+				continue
+			}
+			trie.insertWord(entry.Name())
+		}
+	}
+}
+
 func AutoComplete(prefixString string) []string {
 	matchedStrings := trie.findAllMatches(prefixString)
 	return matchedStrings
