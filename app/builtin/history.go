@@ -12,7 +12,8 @@ func (history History) Name() string {
 }
 
 var historyArr []string
-var historyArrCount int
+
+var HistoryArrCount int
 
 func (history History) Execute(shellArgs []string, ctx *ExecContext) {
 	shellArgsCount := len(shellArgs)
@@ -32,16 +33,30 @@ func (history History) Execute(shellArgs []string, ctx *ExecContext) {
 		}
 	}
 
-	if limit == 0 || limit > historyArrCount {
-		limit = historyArrCount
+	if limit == 0 || limit > HistoryArrCount {
+		limit = HistoryArrCount
 	}
 
-	for idx, historyCmd := range historyArr[historyArrCount-limit:] {
-		fmt.Fprintf(ctx.Stdout, "    %d  %s\n", idx+1+(historyArrCount-limit), historyCmd)
+	for idx, historyCmd := range historyArr[HistoryArrCount-limit:] {
+		fmt.Fprintf(ctx.Stdout, "    %d  %s\n", idx+1+(HistoryArrCount-limit), historyCmd)
 	}
 }
 
 func StoreHistory(cmdLine string) {
 	historyArr = append(historyArr, cmdLine)
-	historyArrCount++
+	HistoryArrCount++
+}
+
+func GetHistory(historyArrIdx *int, direction rune) string {
+
+	var historyString string
+	if direction == 'u' {
+		*historyArrIdx--
+		historyString = historyArr[*historyArrIdx]
+	} else {
+		*historyArrIdx++
+		historyString = historyArr[*historyArrIdx]
+	}
+
+	return historyString
 }
