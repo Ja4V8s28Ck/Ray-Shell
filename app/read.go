@@ -23,6 +23,7 @@ func readLine() (string, error) {
 	fmt.Print(prompt + " ")
 	var readBuffer []byte
 	var tmpReadBuffer []byte
+	var isArrowKeyPressed bool
 
 	cursorPtr := 0
 	tabCount := 0
@@ -94,10 +95,7 @@ func readLine() (string, error) {
 			os.Stdin.Read(seq)
 			if seq[0] == '[' {
 
-				// store the buffer before using arrow down
-				if tmpReadBuffer == nil {
-					tmpReadBuffer = readBuffer
-				}
+				isArrowKeyPressed = true // track arrowkeys to handle temp buffer
 
 				switch seq[1] {
 
@@ -108,17 +106,21 @@ func readLine() (string, error) {
 					historyBuffer := builtin.GetHistory(&historyArrPtr, 'u')
 					readBuffer = []byte(historyBuffer)
 					redraw(readBuffer)
+					cursorPtr = len(readBuffer)
 
 				case 'B':
 					if historyArrPtr >= builtin.HistoryArrCount-1 {
+						historyArrPtr = builtin.HistoryArrCount // index correction
 						readBuffer = tmpReadBuffer
 						redraw(readBuffer)
+						cursorPtr = len(readBuffer)
 						continue
 					}
 
 					historyBuffer := builtin.GetHistory(&historyArrPtr, 'd')
 					readBuffer = []byte(historyBuffer)
 					redraw(readBuffer)
+					cursorPtr = len(readBuffer)
 
 				}
 			}
@@ -130,6 +132,11 @@ func readLine() (string, error) {
 
 			tabCount = 0 // reset tabCount
 		}
+
+		if !isArrowKeyPressed {
+			tmpReadBuffer = readBuffer
+		}
+		isArrowKeyPressed = false
 	}
 }
 
