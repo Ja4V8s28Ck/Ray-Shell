@@ -30,6 +30,7 @@ func (history History) Execute(shellArgs []string, ctx *ExecContext) {
 			limit = intVal
 		} else {
 			fmt.Fprintln(ctx.Stderr, "history: invalid argument")
+			return
 		}
 	}
 
