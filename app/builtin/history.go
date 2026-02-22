@@ -16,6 +16,7 @@ func (history History) Name() string {
 }
 
 var historyArr []string
+var historyAppendStart int
 
 var HistoryArrCount int
 
@@ -30,6 +31,9 @@ func (history History) Execute(shellArgs []string, ctx *ExecContext) {
 
 		case 'r':
 			ReadHistoryFromFile(shellArgs[1])
+
+		case 'a':
+			AppendHistoryToFile(shellArgs[1])
 
 		case 'w':
 			WriteHistoryToFile(shellArgs[1])
@@ -85,6 +89,23 @@ func GetHistory(historyArrIdx *int, direction rune) string {
 	}
 
 	return historyString
+}
+
+func AppendHistoryToFile(fileName string) {
+	file := utils.ReadFile(fileName)
+	defer file.Close()
+
+	scanner := bufio.NewWriter(file)
+	for _, history := range historyArr[historyAppendStart:] {
+		if _, err := scanner.WriteString(history + "\n"); err != nil {
+			fmt.Fprintf(os.Stderr, "history: %v \n", err)
+		}
+	}
+
+	if err := scanner.Flush(); err != nil {
+		fmt.Fprintf(os.Stderr, "history: %v \n", err)
+	}
+	historyAppendStart = len(historyArr)
 }
 
 func ReadHistoryFromFile(fileName string) {
