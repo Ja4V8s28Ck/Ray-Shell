@@ -11,5 +11,16 @@ func (exit Exit) Name() string {
 }
 
 func (exit Exit) Execute(shellArgs []string, ctx *ExecContext) {
+	// Pre-exit history append/write
+	if HISTFILE, ok := os.LookupEnv("HISTFILE"); ok {
+
+		_, err := os.Stat(HISTFILE)
+		if os.IsExist(err) {
+			AppendHistoryToFile(HISTFILE)
+		} else {
+			WriteHistoryToFile(HISTFILE)
+		}
+	}
+
 	os.Exit(0)
 }
