@@ -9,10 +9,13 @@ Most developers take command line shells like bash, zsh, fsh ...etc for granted 
 ### Features implemented so far
 
 - [x] Basics (_Prompt_, _REPL_, Built in commands like _echo_, _exit_, _type_ & _OS system calls_)
-- [x] Navigation (_pwd_, _cd_ & _~_ )
+- [x] Navigation (_pwd_, _cd_ & _~_)
 - [x] Quoting (_'_, _"_ & _\\_)
 - [x] Redirect (_input_, _output_ & _error_)
-- [ ] Autocompletion
-- [ ] Pipelines
-- [ ] History
-- [ ] History persistence
+- [x] Pipelines
+- [x] Autocompletion (_prefix matching via Trie, PATH scanning & Working directory_)
+- [x] History (_in-session navigation with arrow keys_)
+- [x] History persistence (_append/read/write to file_)
+
+### Tools used
+<img src="https://skillicons.dev/icons?i=go,neovim,git" />
