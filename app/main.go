@@ -7,6 +7,8 @@ import (
 	"github.com/codecrafters-io/shell-starter-go/app/builtin"
 )
 
+var historyArrPtr int
+
 func main() {
 	for {
 		cmdLine, err := readLine()
@@ -16,7 +18,10 @@ func main() {
 			os.Exit(1)
 		}
 
-		builtin.StoreHistory(cmdLine)
+		if cmdLine != "" {
+			builtin.StoreHistory(cmdLine)
+			historyArrPtr = builtin.HistoryArrCount
+		}
 
 		shellCmd, shellArgs := parseCmd(cmdLine)
 		if shellCmd == "" {
