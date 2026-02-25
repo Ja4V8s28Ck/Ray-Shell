@@ -61,6 +61,7 @@ func (T *TrieNode) findAllMatches(prefixString string) []string {
 }
 
 var trie TrieNode = Trie()
+var fileTrie TrieNode = Trie()
 
 func buildTrie() {
 	// Insert builtin commands
@@ -83,28 +84,31 @@ func buildTrie() {
 	}
 }
 
-func BuildTrieLazy() {
+func buildTrieForFiles() {
 	// Inserts files in the current directory
 	wd, err := os.Getwd()
 	if err != nil {
 		return
 	}
 
-	for _, dir := range filepath.SplitList(wd) {
-		entries, err := os.ReadDir(dir)
-		if err != nil {
+	entries, err := os.ReadDir(wd)
+	if err != nil {
+		return
+	}
+	for _, entry := range entries {
+		if entry.IsDir() {
 			continue
 		}
-		for _, entry := range entries {
-			if entry.IsDir() {
-				continue
-			}
-			trie.insertWord(entry.Name())
-		}
+		fileTrie.insertWord(entry.Name())
 	}
 }
 
 func AutoComplete(prefixString string) []string {
 	matchedStrings := trie.findAllMatches(prefixString)
+	return matchedStrings
+}
+
+func FileAutoComplete(prefixString string) []string {
+	matchedStrings := fileTrie.findAllMatches(prefixString)
 	return matchedStrings
 }
