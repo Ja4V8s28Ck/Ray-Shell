@@ -52,7 +52,20 @@ func readLine() (string, error) {
 			}
 
 			prefixString := string(readBuffer)
-			autoCompleteMatches := builtin.AutoComplete(prefixString)
+			var autoCompleteMatches []string
+
+			if spaceIdx := strings.LastIndex(prefixString, " "); spaceIdx != -1 {
+				if spaceIdx+1 < len(prefixString) {
+					prefixString = prefixString[spaceIdx+1:]
+				} else {
+					prefixString = ""
+				}
+				autoCompleteMatches = builtin.FileAutoComplete(prefixString)
+
+			} else {
+				autoCompleteMatches = builtin.AutoComplete(prefixString)
+			}
+
 			prefixStringLen := len(prefixString)
 
 			totalMatches := len(autoCompleteMatches)
