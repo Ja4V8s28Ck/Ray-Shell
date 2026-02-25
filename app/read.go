@@ -53,6 +53,8 @@ func readLine() (string, error) {
 
 			prefixString := string(readBuffer)
 			autoCompleteMatches := builtin.AutoComplete(prefixString)
+			prefixStringLen := len(prefixString)
+
 			totalMatches := len(autoCompleteMatches)
 
 			switch totalMatches {
@@ -60,7 +62,7 @@ func readLine() (string, error) {
 				utils.RingBell()
 
 			case 1:
-				suffixString := autoCompleteMatches[0][len(prefixString):] + " "
+				suffixString := autoCompleteMatches[0][prefixStringLen:] + " "
 				fmt.Fprint(os.Stdin, suffixString)
 				readBuffer = append(readBuffer, suffixString...)
 				cursorPtr = len(readBuffer)
@@ -68,7 +70,7 @@ func readLine() (string, error) {
 			default:
 				// add longest common prefix if there is one
 				longestCommonPrefix := utils.FindLongestCommonPrefix(autoCompleteMatches)
-				suffixString := longestCommonPrefix[len(readBuffer):]
+				suffixString := longestCommonPrefix[prefixStringLen:]
 				if suffixString != "" {
 					fmt.Fprint(os.Stdin, suffixString)
 					readBuffer = append(readBuffer, suffixString...)
