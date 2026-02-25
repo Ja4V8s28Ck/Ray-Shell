@@ -35,5 +35,5 @@ func (cd Cd) Execute(shellArgs []string, ctx *ExecContext) {
 	}
 
 	// build trie on directory change
-	BuildTrieLazy()
+	buildTrieForFiles()
 }

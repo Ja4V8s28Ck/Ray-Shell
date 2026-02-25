@@ -26,5 +26,5 @@ func init() {
 	}
 
 	buildTrie()
-	BuildTrieLazy()
+	buildTrieForFiles()
 }
