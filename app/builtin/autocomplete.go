@@ -85,7 +85,7 @@ func buildTrie() {
 }
 
 func buildTrieForFiles() {
-	// Inserts files in the current directory
+	// Inserts files & directories in the current directory
 	wd, err := os.Getwd()
 	if err != nil {
 		return
@@ -97,9 +97,11 @@ func buildTrieForFiles() {
 	}
 	for _, entry := range entries {
 		if entry.IsDir() {
-			continue
+			// insert directories with "/" as suffix
+			fileTrie.insertWord(entry.Name() + "/")
+		} else {
+			fileTrie.insertWord(entry.Name())
 		}
-		fileTrie.insertWord(entry.Name())
 	}
 }
 
