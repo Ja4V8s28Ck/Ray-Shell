@@ -57,10 +57,16 @@ func readLine() (string, error) {
 			if spaceIdx := strings.LastIndex(prefixString, " "); spaceIdx != -1 {
 				if spaceIdx+1 < len(prefixString) {
 					prefixString = prefixString[spaceIdx+1:]
+
+					if matches := builtin.CompleteFilenames(prefixString); len(matches) != 0 {
+						autoCompleteMatches = matches
+					} else {
+						autoCompleteMatches = builtin.FileAutoComplete(prefixString)
+					}
 				} else {
 					prefixString = ""
+					autoCompleteMatches = builtin.FileAutoComplete(prefixString)
 				}
-				autoCompleteMatches = builtin.FileAutoComplete(prefixString)
 
 			} else {
 				autoCompleteMatches = builtin.AutoComplete(prefixString)
@@ -75,7 +81,10 @@ func readLine() (string, error) {
 				utils.RingBell()
 
 			case 1:
-				suffixString := autoCompleteMatches[0][prefixStringLen:] + " "
+				suffixString := autoCompleteMatches[0][prefixStringLen:]
+				if suffixString[len(suffixString)-1] != '/' {
+					suffixString += " "
+				}
 				fmt.Fprint(os.Stdin, suffixString)
 				readBuffer = append(readBuffer, suffixString...)
 				cursorPtr = len(readBuffer)
