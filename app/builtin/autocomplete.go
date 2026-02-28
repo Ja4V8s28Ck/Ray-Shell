@@ -147,13 +147,21 @@ func CompleteFilenames(prefixString string) []string {
 	var matches []string
 	for _, entry := range entries {
 		name := entry.Name()
+		var currentMatch string
+
 		if strings.HasPrefix(name, searchPrefix) {
 			// For nested paths, return the full path relative to current dir
 			if lastSlashIdx >= 0 {
-				matches = append(matches, dirPath+name)
+				currentMatch = dirPath + name
 			} else {
-				matches = append(matches, name)
+				currentMatch = name
 			}
+
+			if entry.IsDir() {
+				currentMatch += "/"
+			}
+
+			matches = append(matches, currentMatch)
 		}
 	}
 	return matches
