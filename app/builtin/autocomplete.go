@@ -3,6 +3,7 @@ package builtin
 import (
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type TrieNode struct {
@@ -85,6 +86,9 @@ func buildTrie() {
 }
 
 func buildTrieForFiles() {
+	// clear file trie
+	fileTrie = Trie()
+
 	// Inserts files & directories in the current directory
 	wd, err := os.Getwd()
 	if err != nil {
@@ -113,4 +117,44 @@ func AutoComplete(prefixString string) []string {
 func FileAutoComplete(prefixString string) []string {
 	matchedStrings := fileTrie.findAllMatches(prefixString)
 	return matchedStrings
+}
+
+func CompleteFilenames(prefixString string) []string {
+	if !strings.Contains(prefixString, "/") {
+		return []string{}
+	}
+
+	var dirPath string
+	var searchPrefix string
+
+	// Check if prefix contains a path separator
+	lastSlashIdx := strings.LastIndex(prefixString, "/")
+	if lastSlashIdx >= 0 {
+		// Split at the last "/" - everything up to and including the "/" is the dir path
+		dirPath = prefixString[:lastSlashIdx+1]
+		searchPrefix = prefixString[lastSlashIdx+1:]
+	} else {
+		// No path separator - search in current directory
+		dirPath = "."
+		searchPrefix = prefixString
+	}
+
+	entries, err := os.ReadDir(dirPath)
+	if err != nil {
+		return []string{}
+	}
+
+	var matches []string
+	for _, entry := range entries {
+		name := entry.Name()
+		if strings.HasPrefix(name, searchPrefix) {
+			// For nested paths, return the full path relative to current dir
+			if lastSlashIdx >= 0 {
+				matches = append(matches, dirPath+name)
+			} else {
+				matches = append(matches, name)
+			}
+		}
+	}
+	return matches
 }
