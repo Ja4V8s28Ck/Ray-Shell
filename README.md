@@ -13,7 +13,7 @@ Most developers take command line shells like bash, zsh, fsh ...etc for granted 
 - [x] Quoting (_'_, _"_ & _\\_)
 - [x] Redirect (_input_, _output_ & _error_)
 - [x] Pipelines
-- [x] Autocompletion (_prefix matching via Trie, PATH scanning & Working directory_)
+- [x] Autocompletion for both files and directories (_prefix matching via Trie, PATH scanning & Working directory_)
 - [x] History (_in-session navigation with arrow keys_)
 - [x] History persistence (_append/read/write to file_)
 
